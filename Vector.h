@@ -15,9 +15,9 @@ typedef struct vector {
 } TVector;
 
 TVector* VectorCreate();
-void VectorEntry(TVector* vector, Key key);
+void VectorEntry(TVector* vector, Key key, char* data);
 void VectorPrint(TVector* vector);
 TVector* VectorBucketSort(TVector* vector);
-void VectorDestroy(TVector** vector );
+void VectorDestroy(TVector** vector);
 
 #endif
