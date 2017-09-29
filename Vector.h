@@ -14,6 +14,7 @@ typedef struct vector {
     size_t size;
 } TVector;
 
+TVector* BucketSort(TVector* vector);
 TVector* VectorCreate();
 void VectorEntry(TVector* vector, Key key, char* data);
 void VectorPrint(TVector* vector);
