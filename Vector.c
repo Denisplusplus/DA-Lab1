@@ -3,6 +3,44 @@
 #include "StringMaker.h"
 #include "Vector.h"
 
+TVector* BucketSort(TVector* vector) {
+	if (vector == NULL || vector->size < 2) {
+		return vector;
+	}
+	double maxValue = vector->item_array[0].key; 
+	double minValue = vector->item_array[0].key;
+	for (int i = 1; i < vector->size; i++) {
+		if (vector->item_array[i].key > maxValue) maxValue = vector->item_array[i].key;
+		if (vector->item_array[i].key < minValue) minValue = vector->item_array[i].key;
+	}
+	int buckets_size = (int) (maxValue - minValue + 1);
+	TVector*  bucket[buckets_size];
+	for (int i = 0; i<buckets_size; i++) {
+		bucket[i] = VectorCreate();
+	}
+   	for (int i = 0; i < vector->size; i++) {
+ 		VectorEntry(bucket[(int) (vector->item_array[i].key - minValue)], vector->item_array[i].key, vector->item_array[i].data);
+    }
+    TVector* vectorR = NULL;
+   	vectorR = VectorCreate();
+    for (int i = 0; i < buckets_size; i++) {
+        if (bucket[i]->size > 0) {
+            for (int j = 0; j < bucket[i]->size; j++) {
+               VectorEntry(vectorR, bucket[i]->item_array[j].key, bucket[i]->item_array[j].data);
+            }
+        }
+    }
+
+    for (int i = 0; i < buckets_size; i++) {
+    	VectorDestroy(&bucket[i]);
+    }	
+    if (*bucket) {
+    	free(*bucket);
+    	(*bucket) = NULL;
+    }
+    return vectorR;
+}
+
 TVector* VectorCreate(void) {
 	TVector* vector = (TVector*) malloc(sizeof(TVector));
 	vector->item_array = NULL;
