@@ -59,6 +59,14 @@ TVector* BucketSort(TVector* vector) {
     	 }
     }
 
+    for (int i = 0; i < bucket_size; i++) {
+    	VectorDestroy(&bucket[i]);
+    }
+    if (*bucket) {
+    	free(*bucket);
+    	*bucket = NULL;
+    }
+    VectorDestroy(&vector);
 
    return newVector; 
 }
@@ -86,10 +94,10 @@ void VectorPrint(TVector* vector) {
 }
 
 void VectorDestroy(TVector** vector) {
-	if (!(*vector) || ((*vector)->size == 0)) {
+	if (!(*vector)) {
 		return;
 	}
-	int max_size = (*vector)->size - 1;
+	int max_size = (*vector)->size;
 	for (int i = 0; i < max_size; i++) {
 		if ((*vector)->item_array[i].data) {
 			StringDestroy(&((*vector)->item_array[i].data));
