@@ -15,7 +15,7 @@ int main(void) {
 		string = StringCreate();
 		VectorEntry(vector, key, string);
 	}
-	VectorPrint(BucketSort(vector));
+	BucketSort(vector);
 	VectorDestroy(&vector);
 
 	return 0;
