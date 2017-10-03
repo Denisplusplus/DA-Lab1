@@ -4,9 +4,9 @@
 #include "StringMaker.h"
 #include "Vector.h"
 
-void swap(TVector* vector1,  TVector* vector2)
+void swap(TItem*r* vector1,  TItem** vector2)
 {
-	TVector temp;
+	TItem* temp;
 	temp = *vector1;
 	*vector1 = *vector2;
 	*vector2 = temp;
@@ -26,51 +26,45 @@ TVector* InsertionSort(TVector* vector)
 }
 
 
-TVector* BucketSort(TVector* vector) {
-	if (vector == NULL || vector->size < 2) {
-		return vector;
+void BucketSort(TVector* vector) {
+	if (vector->size < 2) {
+		VectorPrint(vector);
+		return;
 	}
 	
 	double maxValue = vector->item_array[0].key; 
 	double minValue = vector->item_array[0].key;
+	
 	for (int i = 1; i < vector->size; i++) {
 		if (vector->item_array[i].key > maxValue) maxValue = vector->item_array[i].key;
 		if (vector->item_array[i].key < minValue) minValue = vector->item_array[i].key;
 	}
 
-	int bucket_size = vector->size / 2 ;
+	size_t bucket_size = vector->size / 2 ;
 	double length = (maxValue - minValue + 1) / bucket_size;
 
-	TVector*  bucket[bucket_size];
-	for (int i = 0; i < bucket_size; i++) {
-		bucket[i] = VectorCreate();
+	TVector**  bucket;
+	bucket = (TVector**) malloc(bucket_size * sizeof(TVector*));
+	for (size_t i = 0; i < bucket_size; i++) {
+		 bucket[i] = VectorCreate();
 	}
 
-	for (int i = 0; i < vector->size; i++) {
-       	int index = (int) ((vector->item_array[i].key - minValue) / length);
+	for (size_t i = 0; i < vector->size; i++) {
+       	size_t index = (int) ((vector->item_array[i].key - minValue) / length);
         VectorEntry(bucket[index], vector->item_array[i].key, vector->item_array[i].data);
     }
    
-    TVector* newVector = VectorCreate();
-    for (int i = 0; i < bucket_size; i++) {
-    	 InsertionSort(bucket[i]);
-    	 for (int j = 0; j < bucket[i]->size; j++) {
-    	 	VectorEntry(newVector, bucket[i]->item_array[j].key,  bucket[i]->item_array[j].data);
-    	 }
+    for (size_t i = 0; i < bucket_size; i++) {
+    	InsertionSort(bucket[i]);
+    	VectorPrint(bucket[i]);
     }
-
-    for (int i = 0; i < bucket_size; i++) {
+    for (int i = 0; i<bucket_size; i++) {
     	VectorDestroy(&bucket[i]);
     }
-    if (*bucket) {
-    	free(*bucket);
-    	*bucket = NULL;
-    }
-    VectorDestroy(&vector);
+    free(bucket);
+    bucket = NULL;
 
-   return newVector; 
 }
-
 TVector* VectorCreate(void) {
 	TVector* vector = (TVector*) malloc(sizeof(TVector));
 	vector->item_array = NULL;
