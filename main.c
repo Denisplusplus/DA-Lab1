@@ -1,25 +1,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "StringMaker.h"
 #include "Vector.h"
 
 
 int main(void) {
-
-	TVector* vector = NULL;
-	vector = VectorCreate();
-	char* string = NULL;
-	double key;
-	while (scanf("%lf", &key) != EOF) {
-		string = StringCreate();
-		VectorEntry(vector, key, string);
+	TVector vector;
+	TItem item;
+	VectorCreate(&vector, 1);
+	while(scanf("%lf %s", &item.key, item.data) == 2) {
+		VectorEntry(&vector, item);
 	}
-	BucketSort(vector);
-	VectorDestroy(&vector);
-
-	return 0;
+	if (vector.size >=2 ) {
+		BucketSort(&vector);
+	} else {
+		VectorPrint(&vector);
+	}
+	VectorFree(&vector);
+	return 0;	
 }
+
+
+
 
 
 
