@@ -1,12 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "StringMaker.h"
 #include "Vector.h"
 
-void swap(TItem*r* vector1,  TItem** vector2)
+void swap(TItem* vector1,  TItem* vector2)
 {
-	TItem* temp;
+	TItem temp;
 	temp = *vector1;
 	*vector1 = *vector2;
 	*vector2 = temp;
@@ -27,11 +26,8 @@ TVector* InsertionSort(TVector* vector)
 
 
 void BucketSort(TVector* vector) {
-	if (vector->size < 2) {
-		VectorPrint(vector);
-		return;
-	}
-	
+
+
 	double maxValue = vector->item_array[0].key; 
 	double minValue = vector->item_array[0].key;
 	
@@ -42,41 +38,39 @@ void BucketSort(TVector* vector) {
 
 	size_t bucket_size = vector->size / 2 ;
 	double length = (maxValue - minValue + 1) / bucket_size;
-
-	TVector**  bucket;
-	bucket = (TVector**) malloc(bucket_size * sizeof(TVector*));
+	TVector bucket[bucket_size];
 	for (size_t i = 0; i < bucket_size; i++) {
-		 bucket[i] = VectorCreate();
+		 VectorCreate(&bucket[i], 1);
 	}
 
 	for (size_t i = 0; i < vector->size; i++) {
        	size_t index = (int) ((vector->item_array[i].key - minValue) / length);
-        VectorEntry(bucket[index], vector->item_array[i].key, vector->item_array[i].data);
+        VectorEntry(&bucket[index], vector->item_array[i]);
     }
-   
+
     for (size_t i = 0; i < bucket_size; i++) {
-    	InsertionSort(bucket[i]);
-    	VectorPrint(bucket[i]);
+    	InsertionSort(&bucket[i]);
+    	VectorPrint(&bucket[i]);
     }
-    for (int i = 0; i<bucket_size; i++) {
-    	VectorDestroy(&bucket[i]);
+    for (size_t i = 0; i < bucket_size;i++) {
+    	VectorFree(&bucket[i]);
     }
-    free(bucket);
-    bucket = NULL;
 
 }
-TVector* VectorCreate(void) {
-	TVector* vector = (TVector*) malloc(sizeof(TVector));
-	vector->item_array = NULL;
-	vector->size = 0;
+
+TVector* VectorCreate(TVector* vector, int capacity) {
+	vector->item_array = (TItem*)malloc(sizeof(TItem) * capacity);
+    vector->size = 0;
+	vector->capacity = capacity;
 	return vector;
 }
 
-void VectorEntry(TVector* vector, Key key, char *data) {
-	vector->size++;
-    vector->item_array = (TItem *) realloc(vector->item_array, vector->size * sizeof(TItem));
-    vector->item_array[vector->size - 1].key = key;
-    vector->item_array[vector->size - 1].data = data;
+void VectorEntry(TVector* vector, TItem item) {
+	if (vector->size == vector->capacity) {
+		vector->capacity *= 2;
+		vector->item_array = (TItem*)realloc(vector->item_array, sizeof(TItem) * vector->capacity);
+	}
+	vector->item_array[vector->size++] = item;
 }
 
 
@@ -87,23 +81,10 @@ void VectorPrint(TVector* vector) {
     }
 }
 
-void VectorDestroy(TVector** vector) {
-	if (!(*vector)) {
-		return;
-	}
-	int max_size = (*vector)->size;
-	for (int i = 0; i < max_size; i++) {
-		if ((*vector)->item_array[i].data) {
-			StringDestroy(&((*vector)->item_array[i].data));
-		}
-	}
-	if ((*vector)->item_array) {
-		free((*vector)->item_array);
-		(*vector)->item_array = NULL;
-	}
-	if (*vector) {
-		free (*vector);
-		(*vector) = NULL;
-	}
 
+void VectorFree(TVector* vector)
+{	
+	if (vector->item_array) {
+    	free(vector->item_array);
+	}
 }
