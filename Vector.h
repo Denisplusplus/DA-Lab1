@@ -5,20 +5,21 @@ typedef double Key;
 
 
 typedef struct item {
- 	Key key;
-    char *data;
+ 	 Key key;
+    char data[65];
 } TItem;
 
 typedef struct vector {
     TItem* item_array;
-    size_t size;
+    int size;
+    int capacity;
 } TVector;
 
-TVector* BucketSort(TVector* vector);
-TVector* VectorCreate();
-void VectorEntry(TVector* vector, Key key, char* data);
+void BucketSort(TVector* vector);
+TVector* VectorCreate(TVector* vector, int capacity);
+void VectorEntry(TVector* vector, TItem item);
 void VectorPrint(TVector* vector);
-TVector* VectorBucketSort(TVector* vector);
-void VectorDestroy(TVector** vector);
+void VectorFree(TVector* vector);
+
 
 #endif
